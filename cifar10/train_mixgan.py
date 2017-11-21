@@ -642,13 +642,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
 
-    if not os.path.exists(args.out_dir):
-        os.makedirs(args.out_dir)  # make out_dir if it does not exist, copy current script to out_dir
-        print "Created folder {}".format(args.out_dir)
-        shutil.copyfile(sys.argv[0], args.out_dir + '/training_script.py')
-    elif args.load_epoch is None:
-        print "folder {} already exists. please remove it first.".format(args.out_dir)
-        exit(1)
+    # rm old out_dir
+    if os.path.exists(args.out_dir):
+        shutil.rmtree(args.out_dir)
+
+    os.makedirs(args.out_dir)  # make out_dir; copy current script to out_dir
+    print "Created folder {}".format(args.out_dir)
+    shutil.copyfile(sys.argv[0], args.out_dir + '/training_script.py')
 
     rng = np.random.RandomState(args.seed)  # fixed random seeds
     theano_rng = MRG_RandomStreams(rng.randint(2 ** 15))
