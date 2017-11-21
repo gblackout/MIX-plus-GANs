@@ -407,7 +407,10 @@ class MixSGAN:
 
         # logs = {'loss_gen0_adv': [], 'loss_gen0_cond': [], 'loss_gen0_ent': [], 'loss_disc0_class': [], 'var_gen0': [], 'var_real0': []} # training logs
         logs = {'loss_gen0_adv': [], 'loss_gen0_cond': [], 'loss_gen0_ent': [], 'loss_disc0_class': []}  # training logs
-        for epoch in range(self.args.load_epoch + 1, self.args.num_epoch):
+
+        load_e = self.args.load_epoch if self.args.load_epoch else 0
+
+        for epoch in range(load_e + 1, self.args.num_epoch):
             begin = time.time()
 
             ''' shuffling '''
