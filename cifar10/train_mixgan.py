@@ -8,7 +8,7 @@ import theano.tensor as T
 from theano import pp
 import lasagne
 import lasagne.layers as LL
-from lasagne.layers import dnn
+# from lasagne.layers import dnn
 from lasagne.init import Normal
 
 sys.path.insert(0, '../')

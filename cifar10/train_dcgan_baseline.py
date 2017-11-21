@@ -7,7 +7,7 @@ import theano as th
 import theano.tensor as T
 import lasagne
 import lasagne.layers as LL
-from lasagne.layers import dnn
+# from lasagne.layers import dnn
 from lasagne.init import Normal
 import time
 import nn
