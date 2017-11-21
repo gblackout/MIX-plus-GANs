@@ -128,12 +128,12 @@ from lasagne.layers import DropoutLayer
 import nn
 
 enc_layers = [LL.InputLayer(shape=(None, 3, 32, 32))]
-enc_layer_conv1 = dnn.Conv2DDNNLayer(enc_layers[-1], 64, (5,5), pad=0, stride=1, W=Normal(0.01), nonlinearity=nn.relu)
+enc_layer_conv1 = LL.Conv2DLayer(enc_layers[-1], 64, (5,5), pad=0, stride=1, W=Normal(0.01), nonlinearity=nn.relu)
 enc_layers.append(enc_layer_conv1)
 print(enc_layer_conv1.output_shape)
 enc_layer_pool1 = LL.MaxPool2DLayer(enc_layers[-1], pool_size=(2, 2))
 enc_layers.append(enc_layer_pool1)
-enc_layer_conv2 = dnn.Conv2DDNNLayer(enc_layers[-1], 128, (5,5), pad=0, stride=1, W=Normal(0.01), nonlinearity=nn.relu)
+enc_layer_conv2 = LL.Conv2DLayer(enc_layers[-1], 128, (5,5), pad=0, stride=1, W=Normal(0.01), nonlinearity=nn.relu)
 enc_layers.append(enc_layer_conv2)
 print(enc_layer_conv2.output_shape)
 enc_layer_pool2 = LL.MaxPool2DLayer(enc_layers[-1], pool_size=(2, 2))
@@ -218,13 +218,13 @@ gen_x = gen_x_pre - meanx
 # specify discriminative model
 disc_x_layers = [LL.InputLayer(shape=(None, 3, 32, 32))]
 disc_x_layers.append(LL.GaussianNoiseLayer(disc_x_layers[-1], sigma=0.2))
-disc_x_layers.append(dnn.Conv2DDNNLayer(disc_x_layers[-1], 96, (3,3), pad=1, W=Normal(0.01), nonlinearity=nn.lrelu))
-disc_x_layers.append(nn.batch_norm(dnn.Conv2DDNNLayer(disc_x_layers[-1], 96, (3,3), pad=1, stride=2, W=Normal(0.01), nonlinearity=nn.lrelu)))
+disc_x_layers.append(LL.Conv2DLayer(disc_x_layers[-1], 96, (3,3), pad=1, W=Normal(0.01), nonlinearity=nn.lrelu))
+disc_x_layers.append(nn.batch_norm(LL.Conv2DLayer(disc_x_layers[-1], 96, (3,3), pad=1, stride=2, W=Normal(0.01), nonlinearity=nn.lrelu)))
 disc_x_layers.append(LL.DropoutLayer(disc_x_layers[-1], p=0.5))
-disc_x_layers.append(nn.batch_norm(dnn.Conv2DDNNLayer(disc_x_layers[-1], 192, (3,3), pad=1, W=Normal(0.01), nonlinearity=nn.lrelu)))
-disc_x_layers.append(nn.batch_norm(dnn.Conv2DDNNLayer(disc_x_layers[-1], 192, (3,3), pad=1, stride=2, W=Normal(0.01), nonlinearity=nn.lrelu)))
+disc_x_layers.append(nn.batch_norm(LL.Conv2DLayer(disc_x_layers[-1], 192, (3,3), pad=1, W=Normal(0.01), nonlinearity=nn.lrelu)))
+disc_x_layers.append(nn.batch_norm(LL.Conv2DLayer(disc_x_layers[-1], 192, (3,3), pad=1, stride=2, W=Normal(0.01), nonlinearity=nn.lrelu)))
 disc_x_layers.append(LL.DropoutLayer(disc_x_layers[-1], p=0.5))
-disc_x_layers.append(nn.batch_norm(dnn.Conv2DDNNLayer(disc_x_layers[-1], 192, (3,3), pad=0, W=Normal(0.01), nonlinearity=nn.lrelu)))
+disc_x_layers.append(nn.batch_norm(LL.Conv2DLayer(disc_x_layers[-1], 192, (3,3), pad=0, W=Normal(0.01), nonlinearity=nn.lrelu)))
 disc_x_layers_shared = LL.NINLayer(disc_x_layers[-1], num_units=192, W=Normal(0.01), nonlinearity=nn.lrelu)
 disc_x_layers.append(disc_x_layers_shared)
 
