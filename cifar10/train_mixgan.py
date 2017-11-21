@@ -207,6 +207,8 @@ class MixSGAN:
 
     def train(self):
 
+        linesep('build net')
+
         self.G_weights_layer = nn.softmax_weights(self.args.ng, LL.InputLayer(shape=(), input_var=self.dummy_input))
         self.D_weights_layer = nn.softmax_weights(self.args.ng, LL.InputLayer(shape=(), input_var=self.dummy_input))
 
@@ -283,10 +285,15 @@ class MixSGAN:
         self.loss_disc = self.args.labloss_weight * self.loss_disc0_class + self.args.advloss_weight * self.loss_disc0_adv + self.args.entloss_weight * self.loss_gen0_ent + self.args.mix_entloss_weight * self.Disc_weights_entropy
         self.loss_gen = self.args.advloss_weight * self.loss_gen0_adv + self.args.condloss_weight * self.loss_gen0_cond + self.args.entloss_weight * self.loss_gen0_ent + self.args.mix_entloss_weight * self.Gen_weights_entropy
 
+
+        linesep('try load model')
+
         if self.args.load_epoch is not None:
             print("loading model")
             self.load_model(self.args.load_epoch)
             print("success")
+
+        linesep('config params')
 
         ''' collect parameter updates for discriminators '''
         Disc_params = LL.get_all_params(self.D_weights_layer, trainable=True)
@@ -360,7 +367,8 @@ class MixSGAN:
                 Gen_bn_params.append(l.avg_batch_var)
          """
 
-        ''' define training and testing functions '''
+        linesep('define training and testing functions')
+
         # train_batch_disc = th.function(inputs=[x, meanx, y, lr], outputs=[loss_disc0_class, loss_disc0_adv, gen_x, x],
         #    updates=disc0_param_updates+disc0_bn_updates) 
         # th.printing.debugprint(self.loss_disc)
@@ -385,8 +393,8 @@ class MixSGAN:
                                   outputs=[self.D_weights, self.Disc_weights_entropy, self.G_weights,
                                            self.Gen_weights_entropy])
 
-        ''' load data '''
-        print("Loading data...")
+        linesep('load data ')
+
         meanimg, data = load_cifar_data(self.args.data_dir)
         trainx = data['X_train']
         trainy = data['Y_train']
@@ -395,7 +403,8 @@ class MixSGAN:
         # testy = data['Y_test']
         # nr_batches_test = int(testx.shape[0]/self.args.batch_size)
 
-        ''' perform training  '''
+        linesep('start training')
+
         # logs = {'loss_gen0_adv': [], 'loss_gen0_cond': [], 'loss_gen0_ent': [], 'loss_disc0_class': [], 'var_gen0': [], 'var_real0': []} # training logs
         logs = {'loss_gen0_adv': [], 'loss_gen0_cond': [], 'loss_gen0_ent': [], 'loss_disc0_class': []}  # training logs
         for epoch in range(self.args.load_epoch + 1, self.args.num_epoch):
@@ -597,6 +606,13 @@ class MixSGAN:
         scipy.misc.imsave("cifar_samples_mixgan_%d.png" % epoch, samples[20])
 
 
+def linesep(q, sep='='):
+    tmp = 80 - len(q)
+    slen = tmp / 2 + (tmp % 2 == 0)
+
+    print '\n', sep*slen, q, sep*slen, '\n'
+    sys.stdout.flush()
+
 if __name__ == '__main__':
     ''' settings '''
     parser = argparse.ArgumentParser()
@@ -636,5 +652,8 @@ if __name__ == '__main__':
     lasagne.random.set_rng(np.random.RandomState(rng.randint(2 ** 15)))
     data_rng = np.random.RandomState(args.seed_data)
 
+
+    linesep('init gan model')
     gan = MixSGAN(args)
+
     gan.train()
